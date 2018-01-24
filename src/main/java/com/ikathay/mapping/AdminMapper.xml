@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ikathay.dao.AdminDao" >
+  <resultMap type="com.ikathay.entity.Admin" id="adminResultMap">
+    <id column="id" property="id"/>
+    <result column="nickname" property="nickname"/>
+    <result column="username" property="username"/>
+  </resultMap>
+	<insert id="save1" parameterType="admin">
+		insert into k_admin(name,psd) value (#{name},#{psd})
+	</insert>
+    <select id="adminListPage" resultMap="adminResultMap" parameterType="Page">
+  		select * from k_admin
+	</select>
+	<!-- 根据username和psd查询admin信息 -->
+	<select id="findUsernameAndPsd" resultMap="adminResultMap" parameterType="Admin">
+		select id,nickname from u_user where nickname = #{username} and pswd = #{psd}
+	</select>	
+</mapper>

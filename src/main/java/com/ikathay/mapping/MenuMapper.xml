@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ikathay.dao.MenuDao">
+	<resultMap type="com.ikathay.entity.Menu" id="menuResultMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="content" column="content"/>
+		<result property="state" column="state" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+		<result property="parentNo" column="parent_no"/>
+		<result property="url" column="url"/>
+		<result property="sort" column="sort"/>
+		<association property="parentMenu" javaType="com.ikathay.entity.Menu">
+			<id property="id" column="parent_menu_id"/>
+			<result property="name" column="parent_menu_name"/>
+			<result property="content" column="parent_menu_content"/>
+			<result property="state" column="parent_menu_state" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+			<result property="parentNo" column="parent_menu_parent_no"/>
+			<result property="url" column="parent_menu_url"/>
+		</association>
+		<collection property="childNode" ofType="com.ikathay.entity.Menu">
+			<id property="id" column="child_menu_id"/>
+			<result property="name" column="child_menu_name"/>
+			<result property="content" column="child_menu_content"/>
+			<result property="state" column="child_menu_state" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+			<result property="parentNo" column="child_menu_parent_no"/>
+			<result property="sort" column="child_menu_sort"/>
+			<result property="url" column="child_menu_url"/>
+		</collection>
+	</resultMap>
+	<select id="menuResult" parameterType="HashMap" resultMap="menuResultMap">
+	</select>
+	<select id="findid" parameterType="Long" resultMap="menuResultMap">
+		select menu.id,menu.`name`,menu.content,menu.state,menu.parent_no,menu.url,
+		parentMenu.id parent_menu_id,parentMenu.name parent_menu_name
+		 from k_menu menu left join k_menu parentMenu on menu.parent_no = parentMenu.id 
+		 <where>
+		  menu.id=#{id}
+		 </where>
+	</select>
+	<select id = "queryMenu" parameterType="HashMap" resultMap = "menuResultMap">
+		select menu.id,menu.`name`,menu.content,menu.parent_no,menu.url
+		 from k_menu parent right join k_menu menu on parent.id=menu.parent_no
+			<where>
+				<if test="parentNo != null">
+					menu.parent_no = #{parentNo}
+				</if>
+				<if test="state != null">
+					menu.state = #{state}
+				</if>
+			</where>
+		  ORDER BY menu.parent_no,menu.sort
+	</select>
+	
+	
+	
+</mapper>
